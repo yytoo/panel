@@ -1,5 +1,6 @@
 package com.template;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -17,6 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *      发布事件：在整个启动过程中发布一系列事件，允许监听器对这些事件做出响应。
  */
 @SpringBootApplication
+@MapperScan("com.template.manual.mapper")
 public class SpringBootCreateManualApplication
 {
     public static void main( String[] args )

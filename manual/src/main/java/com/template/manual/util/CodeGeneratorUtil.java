@@ -15,10 +15,25 @@ public class CodeGeneratorUtil {
      * @param args
      */
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/sakila";
+        //MySQL链接增加属性 remarks=true&useInformationSchema=true 用于读取表注释
+        String url = "jdbc:mysql://localhost:3306/sakila?remarks=true&useInformationSchema=true";
         System.out.println(System.getProperty("user.dir"));
         // 使用 FastAutoGenerator.create() 方法创建生成器实例
         FastAutoGenerator.create(url, "root", "123456")
+                /*
+                 * 生成方式: DefaultQuery (元数据查询) 不支持使用 NotLike 的方式反向生成表。
+                 * 当字段长度为 1 时，无法转换成 Boolean 字段，建议在指定数据库连接时添加 &tinyInt1isBit=true。
+                 * 当字段长度大于 1 时，默认转换成 Byte，如果想继续转换成 Integer
+                 */
+                .dataSourceConfig(builder ->
+                        builder.typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
+                            // 兼容旧版本转换成Integer
+                            if (JdbcType.TINYINT == metaInfo.getJdbcType()) {
+                                return DbColumnType.INTEGER;
+                            }
+                            return typeRegistry.getColumnType(metaInfo);
+                        })
+                )
                 .globalConfig(builder -> {
                     builder.author("Y") // 设置作者
                             .outputDir(Paths.get(System.getProperty("user.dir")) + "/manual/src/main/java")// 设置输出目录
