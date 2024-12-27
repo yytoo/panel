@@ -1,0 +1,111 @@
+package ${package.Controller};
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import ${package.Entity}.ErrorCodeEnum;
+import ${package.Entity}.ResultResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import $!{package.Service}.$!{table.serviceName};
+import ${package.Entity}.${entity};
+
+import java.util.ArrayList;
+import java.util.List;
+import com.github.pagehelper.PageInfo;
+
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+    #if(${superControllerClass})
+    public class ${table.controllerName} extends ${superControllerClass} {
+    #else
+    public class ${table.controllerName} {
+    #end
+
+@Autowired
+private ${table.serviceName} ${table.entityPath}Service;
+
+@GetMapping("/page")
+public ResultResponse page(@RequestParam Integer currentPage,@RequestParam Integer pageSize,@RequestParam String param){
+    QueryWrapper<${entity}> queryWrapper=new QueryWrapper<>();
+    if(!param.isBlank()){
+        queryWrapper.like("param",param);
+    }
+    IPage<${entity}> page = new Page<>(currentPage, pageSize);
+    IPage<${entity}> ${table.entityPath}Page=${table.entityPath}Service.page(page,queryWrapper);
+    List<${entity}> ${table.entityPath}List = ${table.entityPath}Page.getRecords();
+    long total = ${table.entityPath}Page.getTotal();
+     PageInfo<${entity}> pageInfo = new PageInfo<>();
+     pageInfo.setList(${table.entityPath}List);
+     return ResultResponse.success(pageInfo);
+}
+
+@GetMapping("/findById/{id}")
+public ResultResponse findById(@PathVariable Integer id){
+    ${entity} record = ${table.entityPath}Service.getById(id);
+    return ResultResponse.success(record);
+}
+
+@PostMapping("/saveOrUpdate")
+public ResultResponse saveOrUpdate(@RequestBody ${entity} ${table.entityPath}){
+    Boolean code=${table.entityPath}Service.saveOrUpdate(${table.entityPath});
+    if(code==true){
+        return ResultResponse.success();
+    }else{
+        return ResultResponse.error(ErrorCodeEnum.INSERT_ERROR.getCode(), ErrorCodeEnum.INSERT_ERROR.getMsg());
+    }
+}
+
+
+
+@DeleteMapping("/{id}")
+public ResultResponse delete(@PathVariable Integer id){
+    QueryWrapper<${entity}> queryWrapper=new QueryWrapper<>();
+    queryWrapper.eq("id",id);
+    Boolean code=${table.entityPath}Service.remove(queryWrapper);
+    if(code==true){
+        return ResultResponse.success();
+    }else{
+        return ResultResponse.error(ErrorCodeEnum.REMOVE_ERROR.getCode(), ErrorCodeEnum.REMOVE_ERROR.getMsg());
+    }
+}
+
+@DeleteMapping("/ids/{ids}")
+public ResultResponse deleteByIds(@PathVariable Integer[] ids){
+    List<Integer> list=new ArrayList<>();
+    for(Integer id:ids){
+        list.add(id);
+    }
+    Boolean code=${table.entityPath}Service.removeBatchByIds(list);
+    if(code==true){
+        return ResultResponse.success();
+    }else{
+        return ResultResponse.error(ErrorCodeEnum.PATCH_REMOVE_ERROR.getCode(), ErrorCodeEnum.PATCH_REMOVE_ERROR.getMsg());
+    }
+}
+
+}
+
+#end
+
