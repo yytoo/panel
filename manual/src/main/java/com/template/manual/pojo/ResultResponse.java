@@ -1,6 +1,12 @@
 package com.template.manual.pojo;
 
-public class ResultResponse {
+import lombok.*;
+
+import java.io.Serializable;
+
+@Data
+@NoArgsConstructor
+public class ResultResponse implements Serializable {
     private int code;
     private String msg;
     private Object data;

@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * <p>
@@ -14,10 +14,9 @@ import lombok.Setter;
  * </p>
  *
  * @author Y
- * @since 2024-12-27
+ * @since 2024-12-28
  */
-@Getter
-@Setter
+@Data
 @TableName("t_user")
 public class User implements Serializable {
 
@@ -36,7 +35,7 @@ public class User implements Serializable {
      * 1-男, 2-女
      */
     @TableField("gender")
-    private Boolean gender;
+    private Integer gender;
 
     @TableField("phone")
     private String phone;

@@ -22,11 +22,11 @@ import com.github.pagehelper.PageInfo;
  * </p>
  *
  * @author Y
- * @since 2024-12-27
+ * @since 2024-12-28
  */
 @RestController
 @RequestMapping("/manual/user")
-    public class UserController {
+public class UserController {
 
 @Autowired
 private IUserService userService;
@@ -47,7 +47,7 @@ public ResultResponse page(@RequestParam Integer currentPage,@RequestParam Integ
 }
 
 @GetMapping("/findById/{id}")
-public ResultResponse findById(@PathVariable Integer id){
+public ResultResponse findById(@PathVariable("id") Integer id){
     User record = userService.getById(id);
     return ResultResponse.success(record);
 }
