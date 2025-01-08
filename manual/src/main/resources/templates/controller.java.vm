@@ -7,6 +7,7 @@ import ${package.Entity}.ErrorCodeEnum;
 import ${package.Entity}.ResultResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.template.manual.util.BusinessException;
 
 import $!{package.Service}.$!{table.serviceName};
 import ${package.Entity}.${entity};
@@ -47,7 +48,7 @@ class ${table.controllerName}#if(${superControllerClass}) : ${superControllerCla
 private ${table.serviceName} ${table.entityPath}Service;
 
 @GetMapping("/page")
-public ResultResponse page(@RequestParam Integer currentPage,@RequestParam Integer pageSize,@RequestParam String param){
+public PageInfo<${entity}> page(@RequestParam Integer currentPage,@RequestParam Integer pageSize,@RequestParam String param){
     QueryWrapper<${entity}> queryWrapper=new QueryWrapper<>();
     if(!param.isBlank()){
         queryWrapper.like("param",param);
@@ -58,50 +59,46 @@ public ResultResponse page(@RequestParam Integer currentPage,@RequestParam Integ
     long total = ${table.entityPath}Page.getTotal();
      PageInfo<${entity}> pageInfo = new PageInfo<>();
      pageInfo.setList(${table.entityPath}List);
-     return ResultResponse.success(pageInfo);
+     return pageInfo;
 }
 
 @GetMapping("/findById/{id}")
-public ResultResponse findById(@PathVariable Integer id){
-    ${entity} record = ${table.entityPath}Service.getById(id);
-    return ResultResponse.success(record);
+public ${entity} findById(@PathVariable Integer id){
+    return ${table.entityPath}Service.getById(id);
 }
 
 @PostMapping("/saveOrUpdate")
-public ResultResponse saveOrUpdate(@RequestBody ${entity} ${table.entityPath}){
-    Boolean code=${table.entityPath}Service.saveOrUpdate(${table.entityPath});
-    if(code==true){
-        return ResultResponse.success();
+public Boolean saveOrUpdate(@RequestBody ${entity} ${table.entityPath}){
+    boolean code=${table.entityPath}Service.saveOrUpdate(${table.entityPath});
+    if(code){
+        return true;
     }else{
-        return ResultResponse.error(ErrorCodeEnum.INSERT_ERROR.getCode(), ErrorCodeEnum.INSERT_ERROR.getMsg());
+        throw new BusinessException(ErrorCodeEnum.INSERT_ERROR.getCode(), ErrorCodeEnum.INSERT_ERROR.getMsg());
     }
 }
 
 
 
 @DeleteMapping("/{id}")
-public ResultResponse delete(@PathVariable Integer id){
+public Boolean delete(@PathVariable Long id){
     QueryWrapper<${entity}> queryWrapper=new QueryWrapper<>();
     queryWrapper.eq("id",id);
-    Boolean code=${table.entityPath}Service.remove(queryWrapper);
-    if(code==true){
-        return ResultResponse.success();
+    boolean code=${table.entityPath}Service.remove(queryWrapper);
+    if(code){
+        return true;
     }else{
-        return ResultResponse.error(ErrorCodeEnum.REMOVE_ERROR.getCode(), ErrorCodeEnum.REMOVE_ERROR.getMsg());
+        throw new BusinessException(ErrorCodeEnum.REMOVE_ERROR.getCode(), ErrorCodeEnum.REMOVE_ERROR.getMsg());
     }
 }
 
 @DeleteMapping("/ids/{ids}")
-public ResultResponse deleteByIds(@PathVariable Integer[] ids){
-    List<Integer> list=new ArrayList<>();
-    for(Integer id:ids){
-        list.add(id);
-    }
-    Boolean code=${table.entityPath}Service.removeBatchByIds(list);
-    if(code==true){
-        return ResultResponse.success();
+public Boolean deleteByIds(@PathVariable Long[] ids){
+    List<Long> list = new ArrayList<>(Arrays.asList(ids));
+    boolean code=${table.entityPath}Service.removeBatchByIds(list);
+    if(code){
+        return true;
     }else{
-        return ResultResponse.error(ErrorCodeEnum.PATCH_REMOVE_ERROR.getCode(), ErrorCodeEnum.PATCH_REMOVE_ERROR.getMsg());
+      throw new BusinessException(ErrorCodeEnum.PATCH_REMOVE_ERROR.getCode(), ErrorCodeEnum.PATCH_REMOVE_ERROR.getMsg());
     }
 }
 

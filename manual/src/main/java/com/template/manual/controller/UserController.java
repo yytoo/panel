@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.template.manual.dto.user.RegisterIDTO;
 import com.template.manual.pojo.ErrorCodeEnum;
-import com.template.manual.pojo.ResultResponse;
+import com.template.manual.util.BusinessException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +15,7 @@ import com.template.manual.service.IUserService;
 import com.template.manual.pojo.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.github.pagehelper.PageInfo;
 
@@ -41,7 +42,7 @@ public Boolean register(@Valid @RequestBody RegisterIDTO registerIDTO){
 }
 
 @GetMapping("/page")
-public ResultResponse page(@RequestParam Integer currentPage,@RequestParam Integer pageSize,@RequestParam String param){
+public PageInfo<User> page(@RequestParam Integer currentPage,@RequestParam Integer pageSize,@RequestParam String param){
     QueryWrapper<User> queryWrapper=new QueryWrapper<>();
     if(!param.isBlank()){
         queryWrapper.like("param",param);
@@ -52,50 +53,46 @@ public ResultResponse page(@RequestParam Integer currentPage,@RequestParam Integ
     long total = userPage.getTotal();
      PageInfo<User> pageInfo = new PageInfo<>();
      pageInfo.setList(userList);
-     return ResultResponse.success(pageInfo);
+     return pageInfo;
 }
 
 @GetMapping("/findById/{id}")
-public ResultResponse findById(@PathVariable Integer id){
-    User record = userService.getById(id);
-    return ResultResponse.success(record);
+public User findById(@PathVariable Integer id){
+    return userService.getById(id);
 }
 
 @PostMapping("/saveOrUpdate")
-public ResultResponse saveOrUpdate(@RequestBody User user){
-    Boolean code=userService.saveOrUpdate(user);
-    if(code==true){
-        return ResultResponse.success();
+public Boolean saveOrUpdate(@RequestBody User user){
+    boolean code=userService.saveOrUpdate(user);
+    if(code){
+        return true;
     }else{
-        return ResultResponse.error(ErrorCodeEnum.INSERT_ERROR.getCode(), ErrorCodeEnum.INSERT_ERROR.getMsg());
+        throw new BusinessException(ErrorCodeEnum.INSERT_ERROR.getCode(), ErrorCodeEnum.INSERT_ERROR.getMsg());
     }
 }
 
 
 
 @DeleteMapping("/{id}")
-public ResultResponse delete(@PathVariable Integer id){
+public Boolean delete(@PathVariable Long id){
     QueryWrapper<User> queryWrapper=new QueryWrapper<>();
     queryWrapper.eq("id",id);
-    Boolean code=userService.remove(queryWrapper);
-    if(code==true){
-        return ResultResponse.success();
+    boolean code=userService.remove(queryWrapper);
+    if(code){
+        return true;
     }else{
-        return ResultResponse.error(ErrorCodeEnum.REMOVE_ERROR.getCode(), ErrorCodeEnum.REMOVE_ERROR.getMsg());
+        throw new BusinessException(ErrorCodeEnum.REMOVE_ERROR.getCode(), ErrorCodeEnum.REMOVE_ERROR.getMsg());
     }
 }
 
 @DeleteMapping("/ids/{ids}")
-public ResultResponse deleteByIds(@PathVariable Integer[] ids){
-    List<Integer> list=new ArrayList<>();
-    for(Integer id:ids){
-        list.add(id);
-    }
-    Boolean code=userService.removeBatchByIds(list);
-    if(code==true){
-        return ResultResponse.success();
+public Boolean deleteByIds(@PathVariable Long[] ids){
+    List<Long> list = new ArrayList<>(Arrays.asList(ids));
+    boolean code=userService.removeBatchByIds(list);
+    if(code){
+        return true;
     }else{
-        return ResultResponse.error(ErrorCodeEnum.PATCH_REMOVE_ERROR.getCode(), ErrorCodeEnum.PATCH_REMOVE_ERROR.getMsg());
+        throw new BusinessException(ErrorCodeEnum.PATCH_REMOVE_ERROR.getCode(), ErrorCodeEnum.PATCH_REMOVE_ERROR.getMsg());
     }
 }
 

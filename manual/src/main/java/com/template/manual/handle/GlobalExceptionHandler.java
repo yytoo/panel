@@ -1,7 +1,6 @@
 package com.template.manual.handle;
 
 import com.template.manual.dto.user.ApiResponse;
-import com.template.manual.pojo.ResultResponse;
 import com.template.manual.util.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +27,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResultResponse<Map<String, String>> handleException(MethodArgumentNotValidException ex){
+    public ApiResponse<Map<String, String>> handleException(MethodArgumentNotValidException ex){
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResultResponse<>(HttpStatus.BAD_REQUEST.value(),"业务异常", errors) ;
+        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),"业务异常", errors) ;
     }
 
 

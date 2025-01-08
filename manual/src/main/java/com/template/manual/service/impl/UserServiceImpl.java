@@ -2,7 +2,6 @@ package com.template.manual.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.template.manual.dto.user.RegisterIDTO;
-import com.template.manual.pojo.ResultResponse;
 import com.template.manual.pojo.User;
 import com.template.manual.mapper.UserMapper;
 import com.template.manual.service.IUserService;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
