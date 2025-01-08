@@ -16,7 +16,7 @@ public class CodeGeneratorUtil {
      */
     public static void main(String[] args) {
         //MySQL链接增加属性 remarks=true&useInformationSchema=true 用于读取表注释
-        String url = "jdbc:mysql://localhost:3306/sakila?remarks=true&useInformationSchema=true";
+        String url = "jdbc:mysql://localhost:3306/big_event?remarks=true&useInformationSchema=true";
         System.out.println(System.getProperty("user.dir"));
         // 使用 FastAutoGenerator.create() 方法创建生成器实例
         FastAutoGenerator.create(url, "root", "123456")
@@ -50,7 +50,7 @@ public class CodeGeneratorUtil {
                             .pathInfo(Collections.singletonMap(OutputFile.xml,System.getProperty("user.dir") + "/manual/src/main/resources/mapper"));	//设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("t_user") // 设置需要生成的表名
+                    builder.addInclude("user") // 设置需要生成的表名
                             .addTablePrefix("t_", "sys_"); // 设置过滤表前缀
                     builder.entityBuilder()
                             .enableFileOverride() //覆盖已生成文件

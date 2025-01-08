@@ -3,9 +3,12 @@ package com.template.manual.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.template.manual.dto.user.RegisterIDTO;
 import com.template.manual.pojo.ErrorCodeEnum;
 import com.template.manual.pojo.ResultResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.template.manual.service.IUserService;
@@ -18,18 +21,24 @@ import com.github.pagehelper.PageInfo;
 
 /**
  * <p>
- *  前端控制器
+ * 用户表 前端控制器
  * </p>
  *
  * @author Y
- * @since 2024-12-28
+ * @since 2025-01-03
  */
 @RestController
+@Validated
 @RequestMapping("/manual/user")
-public class UserController {
+    public class UserController {
 
 @Autowired
 private IUserService userService;
+
+@PostMapping("/register")
+public Boolean register(@Valid @RequestBody RegisterIDTO registerIDTO){
+    return userService.register(registerIDTO);
+}
 
 @GetMapping("/page")
 public ResultResponse page(@RequestParam Integer currentPage,@RequestParam Integer pageSize,@RequestParam String param){
@@ -47,7 +56,7 @@ public ResultResponse page(@RequestParam Integer currentPage,@RequestParam Integ
 }
 
 @GetMapping("/findById/{id}")
-public ResultResponse findById(@PathVariable("id") Integer id){
+public ResultResponse findById(@PathVariable Integer id){
     User record = userService.getById(id);
     return ResultResponse.success(record);
 }

@@ -4,39 +4,71 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
- * 
+ * 用户表
  * </p>
  *
  * @author Y
- * @since 2024-12-28
+ * @since 2025-01-03
  */
-@Data
-@TableName("t_user")
+@Getter
+@Setter
+@TableName("user")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * ID
+     */
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
-    @TableField("name")
-    private String name;
-
-    @TableField("age")
-    private Integer age;
+    private Integer id;
 
     /**
-     * 1-男, 2-女
+     * 用户名
      */
-    @TableField("gender")
-    private Integer gender;
+    @TableField("username")
+    private String username;
 
-    @TableField("phone")
-    private String phone;
+    /**
+     * 密码
+     */
+    @TableField("password")
+    private String password;
+
+    /**
+     * 昵称
+     */
+    @TableField("nickname")
+    private String nickname;
+
+    /**
+     * 邮箱
+     */
+    @TableField("email")
+    private String email;
+
+    /**
+     * 头像
+     */
+    @TableField("user_pic")
+    private String userPic;
+
+    /**
+     * 创建时间
+     */
+    @TableField("create_time")
+    private LocalDateTime createTime;
+
+    /**
+     * 修改时间
+     */
+    @TableField("update_time")
+    private LocalDateTime updateTime;
 }
